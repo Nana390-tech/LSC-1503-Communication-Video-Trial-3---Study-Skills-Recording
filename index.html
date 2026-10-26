@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Take Two – Study Skill Reflection</title>
+<style>
+/* Layout: one step at a time, studio feel — Part 3 theme: rust orange, sky blue, cobalt */
+:root{
+  --ink:#9a3412; --ink-2:#b8481c; --paper:#fdf6f1; --card:#ffffff;
+  --rec:#1d6fd6; --rec-soft:#e1edfc; --sun:#7dd3fc; --sun-soft:#e3f5fe;
+  --good:#1f9d6b; --good-soft:#dcf5ea; --mid:#e08a12; --mid-soft:#fff0d9;
+  --line:#f0ddd1; --muted:#73584b;
+  --display:"Trebuchet MS","Segoe UI",system-ui,sans-serif;
+  --body:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+  --ar:"Segoe UI","Tahoma","Geeza Pro",sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--body);background:var(--paper);color:var(--ink);line-height:1.5}
+header{background:var(--ink);color:#fff;padding:18px max(16px,env(safe-area-inset-left)) 18px}
+.hwrap{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.recdot{width:16px;height:16px;border-radius:50%;background:var(--rec);box-shadow:0 0 0 5px rgba(29,111,214,.3);flex:none}
+header h1{font-family:var(--display);font-size:1.6rem;margin:0;letter-spacing:.5px}
+header p{margin:0;color:#fbd7c2;font-size:.92rem}
+.pts{margin-left:auto;background:var(--sun);color:var(--ink);font-weight:700;padding:6px 14px;border-radius:999px;font-variant-numeric:tabular-nums}
+main{max-width:900px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-left)) 40px}
+.steps{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+.steps span{flex:1;min-width:120px;font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.6px;padding:8px 10px;border-radius:8px;background:#f6e6dc;color:var(--muted)}
+.steps span.on{background:var(--ink);color:#fff}
+.steps span.done{background:var(--good-soft);color:var(--good)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:16px}
+h2{font-family:var(--display);margin:0 0 6px;font-size:1.35rem}
+.ar{font-family:var(--ar);direction:rtl;color:var(--muted);font-size:.95rem}
+label{font-weight:600;display:block;margin:12px 0 4px}
+input[type=text],textarea,select{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;font:inherit;background:#fff;color:var(--ink)}
+input:focus,textarea:focus,select:focus,button:focus-visible{outline:3px solid var(--sun);outline-offset:1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.row{grid-template-columns:1fr}}
+button{font:inherit;font-weight:700;border:none;border-radius:10px;padding:11px 18px;cursor:pointer}
+.btn{background:var(--ink);color:#fff}
+.btn-rec{background:var(--rec);color:#fff}
+.btn-sun{background:var(--sun);color:var(--ink)}
+.btn-ghost{background:#fbefe7;color:var(--ink)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:14px}
+.tip{background:var(--sun-soft);border-radius:10px;padding:10px 12px;font-size:.9rem}
+.tip b{display:block}
+.stage{position:relative;background:#2b1208;border-radius:12px;overflow:hidden;aspect-ratio:16/9;max-width:100%}
+.stage video{width:100%;height:100%;object-fit:cover;display:block}
+.mirror{transform:scaleX(-1)}
+.badge-rec{position:absolute;top:12px;left:12px;background:rgba(0,0,0,.6);color:#fff;padding:5px 10px;border-radius:6px;font-weight:700;font-variant-numeric:tabular-nums;display:flex;gap:8px;align-items:center}
+.badge-rec i{width:10px;height:10px;border-radius:50%;background:var(--rec);animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.2}}
+@media(prefers-reduced-motion:reduce){.badge-rec i{animation:none}}
+.frame-guide{position:absolute;inset:12% 30%;border:2px dashed rgba(125,211,252,.9);border-radius:40% 40% 10px 10px;pointer-events:none}
+.placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#d8a58a;text-align:center;padding:20px}
+.bar{height:6px;background:#b8481c;border-radius:3px;margin-top:10px;overflow:hidden}
+.bar div{height:100%;width:0;background:var(--rec);transition:width .3s linear}
+.err{background:var(--rec-soft);color:#14529e;padding:12px;border-radius:10px;margin-top:12px}
+.marks{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.mark{font-size:.85rem;padding:5px 10px;border-radius:999px;background:#fbefe7}
+.crit{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.crit:last-child{border-bottom:none}
+.crit .q b{display:block}
+.crit .q small{color:var(--muted)}
+.seg{display:flex;gap:6px}
+.seg button{padding:8px 10px;font-size:.85rem;background:#fbefe7;color:var(--ink);font-weight:600}
+.seg button.sel[data-v="3"]{background:var(--good);color:#fff}
+.seg button.sel[data-v="2"]{background:var(--mid);color:#fff}
+.seg button.sel[data-v="1"]{background:var(--rec);color:#fff}
+@media(max-width:600px){.crit{grid-template-columns:1fr}}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.chip{background:var(--sun-soft);color:var(--ink);font-weight:600;font-size:.82rem;padding:6px 10px;border-radius:999px}
+.report h3{margin:18px 0 6px;font-family:var(--display)}
+.score{font-size:2.4rem;font-weight:800;font-family:var(--display);font-variant-numeric:tabular-nums}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+td,th{padding:8px;border-bottom:1px solid var(--line);text-align:left}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-weight:700;font-size:.8rem}
+.p3{background:var(--good-soft);color:var(--good)}.p2{background:var(--mid-soft);color:var(--mid)}.p1{background:var(--rec-soft);color:var(--rec)}
+.gloss{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.gloss div{background:#fbefe7;border-radius:8px;padding:8px 10px;font-size:.88rem}
+.gloss .ar{display:block;font-size:.9rem}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:20px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:50}
+.toast.show{opacity:1}
+.dlhelp{background:var(--good-soft);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:.9rem}
+.dlhelp ul{margin:6px 0;padding-left:20px}
+.dlhelp a{color:var(--ink);font-weight:700}
+.order{margin:8px 0 0;padding-left:0;list-style:none;counter-reset:o;display:grid;gap:8px}
+.order li{counter-increment:o;display:grid;grid-template-columns:34px 1fr;gap:2px 10px;background:var(--sun-soft);border-radius:10px;padding:10px 12px}
+.order li::before{content:counter(o);grid-row:span 2;width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+.order li span{color:var(--muted);font-size:.9rem;grid-column:2}
+.order li:nth-child(5){background:var(--rec-soft)}
+.strip{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.strip span{font-size:.8rem;font-weight:700;padding:5px 10px;border-radius:999px;background:#fbefe7}
+.strip .idstep{background:var(--rec-soft);color:#14529e}
+.lpas{display:flex;gap:8px;flex-wrap:wrap}
+.lpas button{background:#fbefe7;color:var(--ink);border:2px solid transparent;padding:9px 14px}
+.lpas button.sel{background:var(--ink);color:#fff;border-color:var(--sun)}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
+@media print{header,.steps,.actions,footer,.noprint{display:none!important}body{background:#fff}.card{border:1px solid #ccc;break-inside:avoid}}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<header><div class="hwrap">
+  <span class="recdot"></span>
+  <div><h1>Take Two</h1><p>Video Portfolio · Part 3 · Study Skill Reflection &amp; Peer Feedback</p></div>
+  <span class="pts" id="pts">0 pts</span>
+</div></header>
+
+<main>
+  <div class="steps" id="steps">
+    <span>1 · Partners</span><span>2 · Record</span><span>3 · Feedback</span><span>4 · Report</span>
+  </div>
+
+  <!-- STEP 1 -->
+  <section id="s1" class="card">
+    <h2>Who is in your pair?</h2>
+    <p class="ar">من في فريقك؟</p>
+    <div class="row">
+      <div><label for="speaker">Speaker (records the study skill reflection)</label><input type="text" id="speaker" placeholder="e.g. Mariam"></div>
+      <div><label for="partner">Partner (watches and gives feedback)</label><input type="text" id="partner" placeholder="e.g. Shamma"></div>
+    </div>
+    <div class="row">
+      <div><label for="section">Class / Section</label><input type="text" id="section" placeholder="e.g. LSC 1503 – 02"></div>
+      <div><label for="limit">Recording time limit</label>
+        <select id="limit"><option value="60">1 minute</option><option value="90" selected>1.5 minutes</option><option value="120">2 minutes</option></select></div>
+    </div>
+    <label>Which study skill will you talk about? <small style="font-weight:400;color:var(--muted)">(choose one)</small></label>
+    <div class="lpas" id="lpas">
+      <button data-l="Agility and adaptability">Agility and adaptability</button><button data-l="Time management">Time management</button>
+      <button data-l="Collaboration">Collaboration</button><button data-l="Effective communication">Effective communication</button>
+      <button data-l="Critical thinking">Critical thinking</button><button data-l="Note-taking">Note-taking</button>
+      <button data-l="Healthy lifestyle">Healthy lifestyle</button>
+    </div>
+    <div class="tip" style="margin-top:12px"><b>📋 Have your plan ready</b>Use the keyword notes you already made for Part 3. Keep them next to the camera.</div>
+    <h3 style="font-family:var(--display);margin:18px 0 4px">Your study skill reflection: say it in this order</h3>
+    <p class="ar" style="margin:0">قدّم تأملك بهذا الترتيب</p>
+    <ol class="order">
+      <li><b>➡️ Transition</b><span>"Now, let's move on to study skills."</span></li>
+      <li><b>🏷️ Name the skill</b><span>"The skill I found most useful is time management."</span></li>
+      <li><b>📖 Describe the skill</b><span>"This skill means …"</span></li>
+      <li><b>❓ Why you chose it</b><span>"I chose it because …"</span></li>
+      <li><b>🌱 What you learned + a real example</b><span>"I used it when … and I learned that …" Give one real example from this semester.</span></li>
+    </ol>
+    <div class="tip" style="margin-top:10px"><b>🎯 Make it real</b>A real example is the most important part. When did you use this skill at college, at work or at home?</div>
+    <div class="actions"><button class="btn" id="go1">Start recording step →</button></div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section id="s2" class="card" hidden>
+    <h2>Record your study skill reflection</h2>
+    <p class="ar">سجّل تأملك في مهارة الدراسة</p>
+    <p><b id="spk2"></b> speaks. <b id="prt2"></b> holds the device steady at eye level.</p>
+    <div class="stage" id="stage">
+      <video id="live" class="mirror" autoplay muted playsinline></video>
+      <video id="playback" controls playsinline hidden></video>
+      <div class="frame-guide" id="guide" hidden></div>
+      <div class="placeholder" id="ph">Tap <b>&nbsp;Turn on camera&nbsp;</b> to begin. Your browser will ask for permission.</div>
+      <div class="badge-rec" id="recbadge" hidden><i></i><span id="clock">0:00</span></div>
+    </div>
+    <div class="bar"><div id="prog"></div></div>
+    <div class="strip" aria-label="Study skill reflection order"><span>1 Transition</span><span>2 Name skill</span><span>3 Describe</span><span>4 Why</span><span class="idstep">5 🌱 Learned + example</span></div><p id="lpaNow" style="margin:8px 0 0;font-weight:600"></p>
+    <div id="camErr" class="err" hidden></div>
+    <div class="actions">
+      <button class="btn" id="camOn">📷 Turn on camera</button>
+      <button class="btn-rec" id="recBtn" disabled>● Record</button>
+      <button class="btn-ghost" id="stopBtn" disabled>■ Stop</button>
+      <button class="btn-ghost" id="redo" hidden>↺ Record again</button>
+      <button class="btn-sun" id="dlVid" hidden>⬇ Download video</button>
+    </div>
+    <div class="dlhelp noprint" hidden>
+      <b>⬇ Saved as <span class="dlfile"></span></b>
+      <ul>
+        <li><b>Laptop:</b> check your <i>Downloads</i> folder.</li>
+        <li><b>iPhone / iPad:</b> in the share menu tap <i>Save Video</i> (Photos) or <i>Save to Files</i>.</li>
+        <li><b>Android:</b> check <i>Gallery</i> or <i>Files › Downloads</i>.</li>
+      </ul>
+      Didn't work? <a class="dllink" href="#" target="_blank">Open the video here</a>, then use the ⋮ menu or long-press to save it.
+    </div>
+    <p class="noprint" style="color:var(--muted);font-size:.88rem">Keep your face inside the blue guide. At step 5, tell one real story of when you used the skill. The video stays on this device only. Download it if you want to keep it.</p>
+    <div class="actions"><button class="btn-ghost" id="back2">← Back</button><button class="btn" id="go2" disabled>Partner gives feedback →</button></div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section id="s3" class="card" hidden>
+    <h2><span id="prt3"></span>, watch and give feedback</h2>
+    <p class="ar">شاهد الفيديو وقدّم ملاحظاتك</p>
+    <div class="stage"><video id="review" controls playsinline></video></div>
+    <div class="actions noprint">
+      <button class="btn-sun" id="markGood">⭐ Good moment</button>
+      <button class="btn-ghost" id="markTip">💡 Tip here</button>
+    </div>
+    <div class="marks" id="marks"></div>
+
+    <h3 style="font-family:var(--display);margin-top:20px">Rate each point</h3>
+    <div id="crits"></div>
+
+    <h3 style="font-family:var(--display);margin-top:20px">Two stars and a wish</h3>
+    <p style="margin:0;color:var(--muted)">Be kind, specific and helpful. Tap a starter to begin your sentence.</p>
+    <label for="star1">⭐ One thing you did well</label>
+    <div class="chips" data-for="star1"><button class="chip">I liked how you…</button><button class="chip">You did a great job…</button><button class="chip">Your … was very clear.</button></div>
+    <textarea id="star1" rows="2"></textarea>
+    <label for="star2">⭐ Another strength</label>
+    <div class="chips" data-for="star2"><button class="chip">I really enjoyed…</button><button class="chip">It was effective when you…</button></div>
+    <textarea id="star2" rows="2"></textarea>
+    <label for="wish">💡 One wish (a tip to improve)</label>
+    <div class="chips" data-for="wish"><button class="chip">Next time, try to…</button><button class="chip">Maybe you could…</button><button class="chip">It would be even better if…</button></div>
+    <textarea id="wish" rows="2"></textarea>
+    <div id="fbErr" class="err" hidden></div>
+    <div class="actions"><button class="btn-ghost" id="back3">← Back</button><button class="btn" id="go3">See feedback report →</button></div>
+  </section>
+
+  <!-- STEP 4 -->
+  <section id="s4" hidden>
+    <div class="card report" id="report"></div>
+    <div class="card noprint">
+      <h2>Speaker: your reflection</h2>
+      <label for="reflect">After reading the feedback, what will you change in your final video?</label>
+      <textarea id="reflect" rows="2" placeholder="In my final video, I will…"></textarea>
+      <div class="actions">
+        <button class="btn-sun" id="print">🖨 Print / Save as PDF</button>
+        <button class="btn-ghost" id="saveJson">💾 Save feedback (JSON)</button>
+        <button class="btn-sun" id="dlVid2">⬇ Download video</button>
+        <button class="btn-rec" id="swap">⇄ Swap roles</button>
+        <button class="btn-ghost" id="newPair">New pair</button>
+      </div>
+      <div class="dlhelp noprint" hidden>
+      <b>⬇ Saved as <span class="dlfile"></span></b>
+      <ul>
+        <li><b>Laptop:</b> check your <i>Downloads</i> folder.</li>
+        <li><b>iPhone / iPad:</b> in the share menu tap <i>Save Video</i> (Photos) or <i>Save to Files</i>.</li>
+        <li><b>Android:</b> check <i>Gallery</i> or <i>Files › Downloads</i>.</li>
+      </ul>
+      Didn't work? <a class="dllink" href="#" target="_blank">Open the video here</a>, then use the ⋮ menu or long-press to save it.
+    </div>
+    </div>
+  </section>
+
+  <section class="card noprint">
+    <h2>Feedback language</h2>
+    <div class="gloss">
+      <div><b>study skill</b><span class="ar">مهارة دراسية</span></div>
+      <div><b>agility and adaptability</b><span class="ar">المرونة والتكيّف</span></div>
+      <div><b>time management</b><span class="ar">إدارة الوقت</span></div>
+      <div><b>collaboration</b><span class="ar">التعاون</span></div>
+      <div><b>effective communication</b><span class="ar">التواصل الفعّال</span></div>
+      <div><b>critical thinking</b><span class="ar">التفكير النقدي</span></div>
+      <div><b>note-taking</b><span class="ar">تدوين الملاحظات</span></div>
+      <div><b>healthy lifestyle</b><span class="ar">نمط حياة صحي</span></div>
+      <div><b>example</b><span class="ar">مثال</span></div>
+      <div><b>useful</b><span class="ar">مفيد</span></div>
+      <div><b>feedback</b><span class="ar">ملاحظات / تغذية راجعة</span></div>
+      <div><b>eye contact</b><span class="ar">التواصل البصري</span></div>
+    </div>
+  </section>
+</main>
+<footer>Designed by: Nazila Motahari · LSC 1503 Professional Spoken Communication</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const CRITS=[
+  {k:"trans",t:"1. Transition",d:"Clearly moves into the study skill part (e.g. \"Now, let's move on to…\")"},
+  {k:"sname",t:"2. Skill named",d:"Names one study skill from the course list"},
+  {k:"desc",t:"3. Skill described",d:"Explains what the skill means in simple words"},
+  {k:"why",t:"4. Why they chose it",d:"Gives a clear reason"},
+  {k:"learn",t:"5. What they learned",d:"Shares what they learned from using the skill"},
+  {k:"ex",t:"Real example",d:"Gives one specific example from their own life this semester"},
+  {k:"own",t:"Own words",d:"Speaks naturally, not reading the whole time"},
+  {k:"eye",t:"Eye contact",d:"Looks at the camera, short glances at notes only"},
+  {k:"voice",t:"Voice: volume & clarity",d:"Loud enough, words are clear"},
+  {k:"pace",t:"Pace",d:"Not too fast, natural pauses"},
+  {k:"body",t:"Body language & smile",d:"Good posture, friendly face, calm hands"}
+];
+const LV={3:"Great",2:"OK",1:"Work on it"};
+let state={ratings:{},marks:[],points:0,lpas:[]};
+let stream=null,recorder=null,chunks=[],blob=null,blobUrl=null,timer=null,startT=0,mime="";
+
+function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),1800)}
+function addPts(n,msg){state.points+=n;$("pts").textContent=state.points+" pts";if(msg)toast("+"+n+" · "+msg)}
+function go(n){
+  ["s1","s2","s3","s4"].forEach((s,i)=>$(s).hidden=(i+1!==n));
+  [...$("steps").children].forEach((s,i)=>{s.className=i+1===n?"on":(i+1<n?"done":"")});
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+const name=id=>$(id).value.trim()||(id==="speaker"?"Speaker":"Partner");
+
+/* STEP 1 */
+$("lpas").onclick=e=>{
+  const b=e.target.closest("button");if(!b)return;
+  const l=b.dataset.l,i=state.lpas.indexOf(l);
+  state.lpas=i>-1?[]:[l];
+  [...$("lpas").children].forEach(x=>x.classList.toggle("sel",state.lpas.includes(x.dataset.l)));
+};
+const lpaText=()=>state.lpas[0]||"Study skill";
+$("go1").onclick=()=>{
+  if(!$("speaker").value.trim()||!$("partner").value.trim()){toast("Please write both names");return}
+  if(!state.lpas.length){toast("Choose your study skill");return}
+  $("lpaNow").textContent="Study skill: "+lpaText();
+  $("spk2").textContent=name("speaker");$("prt2").textContent=name("partner");
+  go(2);
+};
+
+/* STEP 2 – camera & recording */
+$("camOn").onclick=async()=>{
+  $("camErr").hidden=true;
+  if(!navigator.mediaDevices||!window.MediaRecorder){showErr("This browser cannot record video. Please open the app in Chrome, Edge or Safari.");return}
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user",width:{ideal:1280},height:{ideal:720}},audio:true});
+    const v=$("live");v.srcObject=stream;v.hidden=false;$("playback").hidden=true;
+    $("ph").hidden=true;$("guide").hidden=false;$("recBtn").disabled=false;$("camOn").disabled=true;
+  }catch(e){showErr("The camera did not start. Check that you allowed camera and microphone access, and that no other app is using the camera.")}
+};
+function showErr(m){$("camErr").textContent=m;$("camErr").hidden=false}
+function pickMime(){
+  const c=["video/mp4;codecs=avc1","video/mp4","video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm"];
+  return c.find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||"";
+}
+$("recBtn").onclick=()=>{
+  chunks=[];mime=pickMime();
+  try{recorder=mime?new MediaRecorder(stream,{mimeType:mime}):new MediaRecorder(stream)}catch(e){recorder=new MediaRecorder(stream)}
+  recorder.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+  recorder.onstop=finish;
+  recorder.start(250);startT=Date.now();
+  $("recbadge").hidden=false;$("recBtn").disabled=true;$("stopBtn").disabled=false;
+  const lim=+$("limit").value;
+  timer=setInterval(()=>{
+    const s=(Date.now()-startT)/1000;
+    $("clock").textContent=Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0");
+    $("prog").style.width=Math.min(100,s/lim*100)+"%";
+    if(s>=lim)stopRec();
+  },200);
+};
+function stopRec(){clearInterval(timer);if(recorder&&recorder.state!=="inactive"){try{recorder.requestData()}catch(e){}recorder.stop()}}
+$("stopBtn").onclick=stopRec;
+function finish(){
+  state.duration=Math.round((Date.now()-startT)/1000);
+  blob=new Blob(chunks,{type:recorder.mimeType||mime||"video/webm"});
+  if(!blob.size){showErr("The recording was empty. Please record again (speak for at least a few seconds).");$("redo").hidden=false;$("recbadge").hidden=true;$("stopBtn").disabled=true;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}return}
+  if(blobUrl)URL.revokeObjectURL(blobUrl);
+  blobUrl=URL.createObjectURL(blob);
+  const p=$("playback");p.src=blobUrl;p.hidden=false;$("live").hidden=true;$("guide").hidden=true;
+  $("recbadge").hidden=true;$("stopBtn").disabled=true;$("redo").hidden=false;$("dlVid").hidden=false;$("go2").disabled=false;
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}
+  if(!state.recorded){addPts(20,"Study skill reflection recorded!");state.recorded=true}
+}
+$("redo").onclick=()=>{$("redo").hidden=true;$("dlVid").hidden=true;$("go2").disabled=true;$("prog").style.width="0";$("camOn").disabled=false;$("camOn").click()};
+function vidName(){
+  const ext=blob.type.includes("mp4")?"mp4":"webm";
+  const d=new Date().toISOString().slice(0,10);
+  return `study-skill_${name("speaker").replace(/[^\w؀-ۿ-]+/g,"-")}_${d}.${ext}`;
+}
+async function dlVideo(){
+  if(!blob||!blob.size){toast("No video yet. Record first.");return}
+  const fname=vidName();
+  const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+  /* Phones/tablets: share sheet lets students "Save Video" to Photos/Gallery or Files */
+  if(isMobile&&navigator.canShare){
+    try{
+      const file=new File([blob],fname,{type:blob.type.split(";")[0]});
+      if(navigator.canShare({files:[file]})){
+        await navigator.share({files:[file],title:"My study skill reflection"});
+        toast("Choose Save Video to keep it");state.downloaded=true;showDlHelp(fname);return;
+      }
+    }catch(e){if(e.name==="AbortError")return}
+  }
+  /* Computers (and fallback): normal file download */
+  const a=document.createElement("a");a.href=blobUrl;a.download=fname;a.rel="noopener";
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>a.remove(),1500);
+  toast("Downloading "+fname);
+  if(!state.downloaded){addPts(5);state.downloaded=true}
+  showDlHelp(fname);
+}
+function showDlHelp(fname){
+  document.querySelectorAll(".dlhelp").forEach(box=>{
+    box.hidden=false;
+    box.querySelector(".dlfile").textContent=fname;
+    box.querySelector(".dllink").href=blobUrl;
+    box.querySelector(".dllink").download=fname;
+  });
+}
+$("dlVid").onclick=dlVideo;$("dlVid2").onclick=dlVideo;
+$("back2").onclick=()=>go(1);
+$("go2").onclick=()=>{
+  $("prt3").textContent=name("partner");$("review").src=blobUrl;
+  buildCrits();renderMarks();go(3);
+};
+
+/* STEP 3 – feedback */
+function buildCrits(){
+  $("crits").innerHTML=CRITS.map(c=>`<div class="crit"><div class="q"><b>${c.t}</b><small>${c.d}</small></div>
+    <div class="seg" data-k="${c.k}">${[3,2,1].map(v=>`<button data-v="${v}" class="${state.ratings[c.k]==v?"sel":""}">${LV[v]}</button>`).join("")}</div></div>`).join("");
+  document.querySelectorAll(".seg").forEach(seg=>seg.onclick=e=>{
+    const b=e.target.closest("button");if(!b)return;
+    const k=seg.dataset.k,first=!state.ratings[k];
+    state.ratings[k]=+b.dataset.v;
+    seg.querySelectorAll("button").forEach(x=>x.classList.toggle("sel",x===b));
+    if(first)addPts(5);
+  });
+}
+document.querySelectorAll(".chips").forEach(c=>c.onclick=e=>{
+  const b=e.target.closest(".chip");if(!b)return;
+  const ta=$(c.dataset.for);ta.value=(ta.value?ta.value.trim()+" ":"")+b.textContent.replace("…"," ").trim()+" ";ta.focus();
+});
+function fmt(t){return Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0")}
+function addMark(type){const t=$("review").currentTime||0;state.marks.push({type,t});state.marks.sort((a,b)=>a.t-b.t);renderMarks();addPts(2)}
+$("markGood").onclick=()=>addMark("good");$("markTip").onclick=()=>addMark("tip");
+function renderMarks(){
+  $("marks").innerHTML=state.marks.length?state.marks.map(m=>`<button class="mark" data-t="${m.t}">${m.type==="good"?"⭐":"💡"} ${fmt(m.t)}</button>`).join(""):'<span style="color:var(--muted);font-size:.88rem">While watching, tap the buttons to mark moments. Tap a mark to jump back to it.</span>';
+  $("marks").querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{$("review").currentTime=+b.dataset.t;$("review").play()});
+}
+$("back3").onclick=()=>go(2);
+$("go3").onclick=()=>{
+  const miss=CRITS.filter(c=>!state.ratings[c.k]).length;
+  const words=["star1","star2","wish"].filter(id=>$(id).value.trim().split(/\s+/).length<4);
+  if(miss||words.length){
+    $("fbErr").textContent=(miss?`Rate all points (${miss} left). `:"")+(words.length?"Write at least 4 words in each feedback box.":"");
+    $("fbErr").hidden=false;return;
+  }
+  $("fbErr").hidden=true;
+  if(!state.fbDone){addPts(30,"Helpful feedback!");state.fbDone=true}
+  buildReport();go(4);confetti();
+};
+
+/* STEP 4 – report */
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function buildReport(){
+  const total=CRITS.reduce((a,c)=>a+state.ratings[c.k],0),max=CRITS.length*3,pct=Math.round(total/max*100);
+  const strengths=CRITS.filter(c=>state.ratings[c.k]===3).map(c=>c.t);
+  const focus=CRITS.filter(c=>state.ratings[c.k]===1).map(c=>c.t);
+  const d=new Date().toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+  $("report").innerHTML=`
+   <h2>Peer Feedback Report · Part 3: Study Skill Reflection</h2>
+   <p style="margin:0">Speaker: <b>${esc(name("speaker"))}</b> · Feedback from: <b>${esc(name("partner"))}</b> · <b>${esc(lpaText())}</b><br>
+   ${esc($("section").value.trim()||"LSC 1503")} · ${d} · Video length ${fmt(state.duration||0)}</p>
+   <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;margin-top:14px">
+     <div><div class="score">${total}/${max}</div><small style="color:var(--muted)">${pct}% · ${pct>=85?"Ready to film!":pct>=60?"Almost there":"Practise once more"}</small></div>
+     <div style="flex:1;min-width:200px">${strengths.length?`<b style="color:var(--good)">Strongest:</b> ${strengths.join(", ")}<br>`:""}${focus.length?`<b style="color:var(--rec)">Focus on:</b> ${focus.join(", ")}`:""}</div>
+   </div>
+   <h3>Checklist</h3>
+   <div style="overflow-x:auto"><table><tr><th>Point</th><th>Rating</th></tr>
+   ${CRITS.map(c=>`<tr><td>${c.t}</td><td><span class="pill p${state.ratings[c.k]}">${LV[state.ratings[c.k]]}</span></td></tr>`).join("")}</table></div>
+   <h3>Two stars and a wish</h3>
+   <p>⭐ ${esc($("star1").value.trim())}</p><p>⭐ ${esc($("star2").value.trim())}</p><p>💡 ${esc($("wish").value.trim())}</p>
+   ${state.marks.length?`<h3>Marked moments</h3><p>${state.marks.map(m=>(m.type==="good"?"⭐ ":"💡 ")+fmt(m.t)).join(" · ")}</p>`:""}
+   <h3>Speaker reflection</h3><p id="refOut" style="color:var(--muted)">${esc($("reflect").value.trim())||"(write below)"}</p>`;
+}
+$("reflect").oninput=()=>{const o=$("refOut");if(o)o.textContent=$("reflect").value.trim()||"(write below)"};
+$("print").onclick=()=>window.print();
+function data(){return{app:"Take Two – Part 3 Study Skill Reflection",studySkill:lpaText(),speaker:name("speaker"),partner:name("partner"),section:$("section").value.trim(),date:new Date().toISOString(),
+  durationSec:state.duration,ratings:Object.fromEntries(CRITS.map(c=>[c.t,LV[state.ratings[c.k]]])),
+  star1:$("star1").value.trim(),star2:$("star2").value.trim(),wish:$("wish").value.trim(),
+  markedMoments:state.marks.map(m=>({type:m.type,time:fmt(m.t)})),reflection:$("reflect").value.trim(),points:state.points}}
+$("saveJson").onclick=()=>{
+  const b=new Blob([JSON.stringify(data(),null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=`study-skill-feedback_${name("speaker").replace(/\s+/g,"-")}.json`;
+  document.body.appendChild(a);a.click();a.remove();toast("Feedback saved");
+};
+function resetRound(){
+  state.ratings={};state.marks=[];state.recorded=false;state.fbDone=false;state.duration=0;
+  ["star1","star2","wish","reflect"].forEach(id=>$(id).value="");
+  blob=null;state.downloaded=false;document.querySelectorAll(".dlhelp").forEach(b=>b.hidden=true);$("camErr").hidden=true;$("playback").hidden=true;$("playback").removeAttribute("src");$("live").hidden=false;
+  $("ph").hidden=false;$("guide").hidden=true;$("camOn").disabled=false;$("recBtn").disabled=true;
+  $("redo").hidden=true;$("dlVid").hidden=true;$("go2").disabled=true;$("prog").style.width="0";$("clock").textContent="0:00";
+}
+$("swap").onclick=()=>{
+  if(blob&&!state.downloaded&&!state.swapWarned){state.swapWarned=true;toast("Download the video first — tap Swap again to continue");return}
+  state.swapWarned=false;
+  const s=$("speaker").value;$("speaker").value=$("partner").value;$("partner").value=s;
+  resetRound();$("spk2").textContent=name("speaker");$("prt2").textContent=name("partner");
+  state.lpas=[];[...$("lpas").children].forEach(x=>x.classList.remove("sel"));
+  toast("Roles swapped: "+name("speaker")+", choose your study skill");go(1);
+};
+$("newPair").onclick=()=>{
+  if(blob&&!state.downloaded&&!state.newWarned){state.newWarned=true;toast("Download the video first — tap New pair again to continue");return}
+  state.newWarned=false;state.lpas=[];[...$("lpas").children].forEach(x=>x.classList.remove("sel"));resetRound();$("speaker").value="";$("partner").value="";state.points=0;$("pts").textContent="0 pts";go(1)};
+
+/* confetti */
+function confetti(){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  const c=$("confetti"),x=c.getContext("2d");c.width=innerWidth;c.height=innerHeight;
+  const cols=["#1d6fd6","#7dd3fc","#9a3412","#1f9d6b","#ffffff"];
+  const P=Array.from({length:140},()=>({x:Math.random()*c.width,y:-20-Math.random()*c.height*.5,r:4+Math.random()*5,c:cols[Math.random()*5|0],vy:2+Math.random()*3,vx:-1+Math.random()*2,a:Math.random()*6}));
+  let f=0;(function tick(){x.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.y+=p.vy;p.x+=p.vx;p.a+=.1;x.fillStyle=p.c;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.6);x.restore()});
+    if(++f<180)requestAnimationFrame(tick);else x.clearRect(0,0,c.width,c.height)})();
+}
+go(1);
+</script>
+</body>
+</html>
